@@ -2,7 +2,6 @@ const express = require('express')
 const Task = require('../models/task')
 const router = new express.Router()
 
-module.exports = router
 
 //resource creation end points
 router.post('/tasks', async (req, res) =>{
@@ -106,3 +105,4 @@ router.delete('/tasks/:id', async (req,res) =>{
     }
 })
 
+module.exports = router

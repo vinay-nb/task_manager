@@ -1,8 +1,13 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 
-module.exports = router
+const bodyParser = require('body-parser')
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
+
 //loading from postman
 router.post('/users', async (req, res) =>{
     const user = new User(req.body)
@@ -27,28 +32,25 @@ router.post ('/users/login',async(req,res) => {
         res.status(400).send()
     }
 })
-   
+})
 
-    // user.save().then( ()=>{
-    //         res.send(user)
-    // }).catch( (e) =>{
-    //         res.status(400).send(e)
-    // })
+// logout router
+router.post('/users/logout', auth, async (req, res) =>{
+    try {
+        req.user.tokens = req.user.tokens.filter ((token) => {
+            return token.token != req.token
+        })  
+        await req.user.save()
+
+        res.send()
+    } catch(e) {
+        res.status(500).send()
+    }
 })
 
 // to fetch user
-router.get('/users', async (req, res) => {
-    try{
-        const users = await User.find({})
-        res.send(users)
-    } catch (e) {
-        res.status (500).send()
-    }
-    // User.find({}).then( (users) =>{
-    //     res.send(users)
-    // }).catch( (e) =>{
-    //     res.status(500).send(e)
-    // })
+router.get('/users/me', auth, async (req, res) => {
+   res.send(req.user)
 })
 
 //fetching user by id
@@ -119,3 +121,7 @@ router.delete('/user/:id', async (req,res) =>{
         res.status(500).send()
     }
 })
+
+
+
+module.exports = router
