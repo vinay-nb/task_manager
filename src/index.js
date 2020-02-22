@@ -31,6 +31,16 @@ require('./db/mongoose')
 // with  middleware: new request->do something -> run route handler
 
 //to use the data
+
+const multer = require('multer')
+const upload = multer({
+  dest: 'images'
+})
+
+app.post('/upload',upload.single('upload'), ( req, res) => {
+  res.send()
+})
+
 app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
@@ -40,14 +50,38 @@ app.listen(port, () =>{
     console.log('listening port'+port)
 })
 
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 
-const myFunction = async () => {
-  const token = jwt.sign({ _id:'abcd12'}, 'this is my task app', {expiresIn: '2 days'})
-  console.log(token)
+// const myFunction = async () => {
+//   const token = jwt.sign({ _id:'abcd12'}, 'this is my task app', {expiresIn: '2 days'})
+//   console.log(token)
 
-  const data = jwt.verify(token, 'this is my task app')
-  console.log(data)
+//   const data = jwt.verify(token, 'this is my task app')
+//   console.log(data)
+// }
+
+// myFunction()
+
+// const pet = {
+//   name:'ruby'
+// }
+
+// pet.toJSON = function () {
+//   console.log(this)
+//   return this
+// }
+
+// const Task = require('./modles/tasks')
+// const User = require('./models/user')
+
+const main =  async() => {
+  // const task = await Task.findById('')
+  // await task.populate('owner').execPopulate()
+  // console.log(task.owner)
+  const user = await User.findById()
+  await user.populate('tasks').execPopulate()
+  console.log(user.tasks)
+
 }
 
-myFunction()
+console.log(JSON.stringify(pet))
